@@ -21,7 +21,9 @@ if($idcard->validate()) {
     $idcard->getGenderCode(); // 性别：1 | 2
     $idcard->getAge(); // 年龄
     $idcard->getConstellation(); // 星座
-    $idcard->getAddress(); // 出生地
+    $idcard->getRegion(); // 出生地
+    $idcard->format(); // 格式化输出：5226***********326
+    $idcard->format('-', 6, 4); // 格式化输出：522632--------2326
 } else {
     echo "验证不通过";
 }

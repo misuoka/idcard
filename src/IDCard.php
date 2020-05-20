@@ -59,7 +59,7 @@ class IDCard
 
     public function __construct($code, $area = "zh")
     {
-        $this->code = strtoupper($code);
+        $this->code = strtoupper(trim($code));
     }
 
     /**
@@ -98,15 +98,19 @@ class IDCard
             } else {
                 $code = $this->code;
                 if (strlen($code) == 18) {
-                    $year  = intval(substr($code, 6, 4));
-                    $month = intval(substr($code, 10, 2));
-                    $day   = intval(substr($code, 12, 2));
+                    $array = [
+                        substr($code, 6, 4),
+                        substr($code, 10, 2),
+                        substr($code, 12, 2),
+                    ];
                 } else {
-                    $year  = intval("19" . substr($code, 6, 2));
-                    $month = intval(substr($code, 8, 2));
-                    $day   = intval(substr($code, 10, 2));
+                    $array = [
+                        '19' . substr($code, 6, 2),
+                        substr($code, 8, 2),
+                        substr($code, 10, 2),
+                    ];
                 }
-                $this->birthdate = new \DateTime($year . '-' . $month . '-' . $day);
+                $this->birthdate = new \DateTime(\implode('-', $array));
             }
         }
 
@@ -239,14 +243,49 @@ class IDCard
         }
     }
 
-    public function getAddress()
+    /**
+     * 获得出生地区
+     *
+     * @return void
+     */
+    public function getRegion($seperate = ' ')
     {
         if (!$this->validate()) {
             throw new \Exception('身份证号码错误，无法解析信息');
         }
 
-        $gb2260 = new \GB2260\GB2260();
-        return $gb2260->get(\substr($this->code, 0, 6));
+        $data = require __DIR__ . '/data/region.php';
+
+        $regionCode = \substr($this->code, 0, 6);
+
+        $province = \substr_replace($regionCode, '0000', 2, 4);
+        $district = \substr_replace($regionCode, '00', 4, 2);
+
+        return \implode($seperate, [
+            $data[$province],
+            $data[$district],
+            $data[$regionCode],
+        ]);
+    }
+
+    /**
+     * 获得格式化后的身份证号
+     *
+     * @param string $replace
+     * @param integer $left
+     * @param integer $right
+     * @return void
+     */
+    public function format($replace = '*', $left = 4, $right = 3)
+    {
+        $length = strlen($this->code) - $left - $right;
+
+        $tpl = '';
+        for ($i = 0; $i < $length; $i++) {
+            $tpl .= $replace;
+        }
+
+        return \substr_replace($this->code, $tpl, $left, $length);
     }
 
     private function check18Code($code = null)
@@ -276,22 +315,23 @@ class IDCard
 
     private function check15Code($code = null)
     {
-        $code  = $code ? $code : $this->code;
+        $code = $code ? $code : $this->code;
         // 正则校验
         // 校验省份
         // 校验出生地
         // 校验生日
         $gb2260 = new \GB2260\GB2260();
-        if(!$gb2260->get(\substr($code, 0, 6))) {
+        if (!$gb2260->get(\substr($code, 0, 6))) {
             return false;
         }
 
         try {
-            
-            $year  = intval("19" . substr($code, 6, 2));
-            $month = intval(substr($code, 8, 2));
-            $day   = intval(substr($code, 10, 2));
-            $datetime = new \DateTime($year . '-' . $month . '-' . $day);
+            $array = [
+                '19' . substr($code, 6, 2),
+                substr($code, 8, 2),
+                substr($code, 10, 2),
+            ];
+            $datetime = new \DateTime(\implode('-', $array));
         } catch (\Exception $e) {
             return false;
         }
