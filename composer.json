@@ -9,5 +9,13 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "php": ">=7.0.0",
+        "cn/gb2260": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "misuoka\\" : "src"
+        }
+    }
 }

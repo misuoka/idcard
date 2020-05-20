@@ -1,0 +1,6 @@
+.idea
+.vscode/
+log/
+vendor/
+composer.lock
+test/index.php
