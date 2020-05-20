@@ -12,8 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.0.0",
-        "cn/gb2260": "dev-master"
+        "php": ">=7.0.0"
     },
     "autoload": {
         "psr-4": {
