@@ -1,0 +1,13 @@
+{
+    "name": "misuoka/idcard",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "misuoka",
+            "email": "125158612@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
